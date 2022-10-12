@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gotest
+  name: go-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gotest
+  template:
+    metadata:
+      labels:
+        app: gotest
+    spec:
+      containers:
+      - image: docker.io/zhuzhulovefly0404/shgo-task1-creeper
+        name: creeper
+        ports:
+        - containerPort: 8848
+          name: api
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gotest
+  name: go-test
+spec:
+  ports:
+  - port: 80
+    name: server-api
+    protocol: TCP
+    targetPort: 8848
+  selector:
+    app: gotest
+  type: LoadBalancer
