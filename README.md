@@ -6,5 +6,5 @@ This is for golang learn task record and verification.
 
 `kubectl apply -k "github.com/Sherlock-Zhu/golang-task/task1/deploy"`
 
-Then please check the service with name go-test and test
+Then please check the service with name go-test and test with curl or web browser
 
