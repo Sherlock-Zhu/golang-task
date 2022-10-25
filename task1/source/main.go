@@ -57,7 +57,7 @@ func GetUrlContent(url string) (body []byte, err error, ErrorState bool) {
 
 // give error message when access to path other than url
 func Helper(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "You are under path %q, currently there is no function under this path\nfunctinal path now: url", r.URL.Path)
+	fmt.Fprintf(w, "You are under path %q, currently there is no function under this path\nfunctinal path now: url\n", r.URL.Path)
 }
 
 // Print result which will be called by GerUrlInside
@@ -116,7 +116,7 @@ func FormatUrl(w http.ResponseWriter, query string, CCh chan<- bool) {
 		Urls = query
 	default:
 		lock.Lock()
-		fmt.Fprintf(w, "query \"%s\" is not valid\n, query should be a valid url start with http:// or https://", query)
+		fmt.Fprintf(w, "query \"%s\" is not valid\n, query should be a valid url start with http:// or https:// \n", query)
 		lock.Unlock()
 		return
 	}
