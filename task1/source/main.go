@@ -57,6 +57,23 @@ func GetUrlContent(url string) (body []byte, err error, ErrorState bool) {
 
 // give error message when access to path other than url
 func Helper(w http.ResponseWriter, r *http.Request) {
+	Sip := strings.Split(r.RemoteAddr, ":")[0]
+	LocationURL := "http://ip-api.com/json/" + Sip
+	UrlContent, _, ErrorState := GetUrlContent(LocationURL)
+	if !ErrorState {
+		reg := regexp.MustCompile(`"city":"(.*?)"`)
+		LocationName := string(reg.FindSubmatch(UrlContent)[1])
+		fmt.Fprintf(w, "Welcome user from %s. ", LocationName)
+		WeatherURL := "http://api.openweathermap.org/data/2.5/weather?appid=219925523db4482886d8f964d7cd9575&units=metric&q=" + LocationName
+		UrlContent2, _, ErrorState2 := GetUrlContent(WeatherURL)
+		if !ErrorState2 {
+			regw := regexp.MustCompile(`"description":"(.*?)"`)
+			regt := regexp.MustCompile(`"temp":(.*?),`)
+			WeatherC := string(regw.FindSubmatch(UrlContent2)[1])
+			TemperatureC := string(regt.FindSubmatch(UrlContent2)[1])
+			fmt.Fprintf(w, "Outside weather in your city is: %s, Tempreture now is: %s\n", WeatherC, TemperatureC)
+		}
+	}
 	fmt.Fprintf(w, "You are under path %q, currently there is no function under this path\nfunctinal path now: url\n", r.URL.Path)
 }
 
@@ -126,6 +143,7 @@ func FormatUrl(w http.ResponseWriter, query string, CCh chan<- bool) {
 // main body of creeper
 func GetUrlInside(w http.ResponseWriter, r *http.Request) {
 	CCh := make(chan bool)
+	fmt.Printf("source IP: %s", r.RemoteAddr)
 	query := r.URL.RawQuery
 	fmt.Fprintf(w, " query is: %q\n", query)
 	switch r.Method {
