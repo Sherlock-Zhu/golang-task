@@ -39,3 +39,4 @@ spec:
   selector:
     app: gotest
   type: LoadBalancer
+  externalTrafficPolicy: Local
