@@ -15,6 +15,8 @@ V4
 7. support post method to give multiple urls in one time
 8. use go routine to check all url in the same time, use channel to get the completed signal of each routine and use mutex lock to avoid different routine write to reply channel in same time(here is a bug considering using overall channel)
 9. update unused path reply to give currently useful path
+V5
+10. add some welcome words(weather and temperature) when access to wrong path
 */
 
 import (
@@ -58,6 +60,8 @@ func GetUrlContent(url string) (body []byte, err error, ErrorState bool) {
 // give error message when access to path other than url
 func Helper(w http.ResponseWriter, r *http.Request) {
 	Sip := strings.Split(r.RemoteAddr, ":")[0]
+	fwdAddress := r.Header.Get("X-Forwarded-For")
+	fmt.Println(fwdAddress)
 	LocationURL := "http://ip-api.com/json/" + Sip
 	UrlContent, _, ErrorState := GetUrlContent(LocationURL)
 	if !ErrorState {
@@ -71,7 +75,7 @@ func Helper(w http.ResponseWriter, r *http.Request) {
 			regt := regexp.MustCompile(`"temp":(.*?),`)
 			WeatherC := string(regw.FindSubmatch(UrlContent2)[1])
 			TemperatureC := string(regt.FindSubmatch(UrlContent2)[1])
-			fmt.Fprintf(w, "Outside weather in your city is: %s, Tempreture now is: %s\n", WeatherC, TemperatureC)
+			fmt.Fprintf(w, "Outside weather in your city is: %s, Temperature now is: %s\n", WeatherC, TemperatureC)
 		}
 	}
 	fmt.Fprintf(w, "You are under path %q, currently there is no function under this path\nfunctinal path now: url\n", r.URL.Path)
